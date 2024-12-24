@@ -1,16 +1,13 @@
 import boto3
 import os
 
-# AWS Credentials (as in your original script)
 aws_access_key = ""
 aws_secret_key = ""
 
-# HCP S3 bucket and tasks
 bucket_name = "hcp-openaccess"
 tasks = ["WM", "GAMBLING", "LANGUAGE", "MOTOR", "RELATIONAL", "SOCIAL", "EMOTION"]
 prefix_template = "HCP_1200/{subject_id}/MNINonLinear/Results/tfMRI_{task}_LR/tfMRI_{task}_LR_Atlas.dtseries.nii"
 
-# Initialize S3 Client
 s3 = boto3.client(
     's3',
     aws_access_key_id=aws_access_key,
@@ -18,12 +15,6 @@ s3 = boto3.client(
 )
 
 def download_timeseries(subject_id, output_dir):
-    """
-    Download timeseries data for all tasks for a single subject.
-
-    :param subject_id: Subject ID (e.g., '100307')
-    :param output_dir: Directory to save the downloaded files
-    """
     os.makedirs(output_dir, exist_ok=True)
     
     for task in tasks:
@@ -43,14 +34,6 @@ def download_timeseries(subject_id, output_dir):
             print(f"  Failed to download {subject_specific_file_name} for subject {subject_id}, task {task}: {e}")
 
 def download_for_subject_list(subject_list_file, output_dir, max_subjects=None):
-    """
-    Download data for each subject listed in 'subject_list_file'.
-    If max_subjects is set, stop after downloading that many subjects.
-
-    :param subject_list_file: Path to file containing one subject ID per line
-    :param output_dir: Directory to store downloaded files
-    :param max_subjects: Optional limit on how many subjects to download
-    """
     # Read subject IDs from file, stripping empty lines
     with open(subject_list_file, "r") as f:
         subject_ids = [line.strip() for line in f if line.strip()]
@@ -70,9 +53,8 @@ def download_for_subject_list(subject_list_file, output_dir, max_subjects=None):
     print(f"\nFinished downloading data for {count} subjects.")
 
 if __name__ == "__main__":
-    # Example usage:
-    subject_list_file = "valid_subjects.txt"   # the file you mentioned
-    output_dir = "data"                        # directory to store all downloaded files
-    max_subjects = 50  # set an integer limit, or None to download all
+    subject_list_file = "valid_subjects.txt"   
+    output_dir = "data"                       
+    max_subjects = 100
 
     download_for_subject_list(subject_list_file, output_dir, max_subjects)
